@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projeto Integrador - Quinto Semestre</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ADD8E6; /* Azul Claro */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333; /* Cor de texto padrão */
+        }
+
+        .container {
+            display: flex;
+            max-width: 800px;
+            background-color: #FFFFFF; /* Branco */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border: 4px dotted #8A2BE2; /* Destaque de contorno violeta pontilhado */
+        }
+
+        .right-section {
+            flex: 1;
+            padding: 20px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #8A2BE2; /* Violeta Principal */
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin-bottom: 20px;
+            color: #333; /* Cor de texto padrão */
+        }
+
+        a {
+            text-decoration: none;
+            color: #8A2BE2; /* Violeta Principal */
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+
+        a:last-child {
+            margin-right: 0;
+        }
+
+        a:hover {
+            color: #4169E1; /* Azul Escuro */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="right-section">
+            <h1>Bem-vindo ao Monitoramento de Jardinagem!</h1>
+            <p>Por favor, faça o login ou cadastre-se para acessar o sistema.</p>
+            <a href="{{ url_for('login') }}">Entrar</a> ou <a href="{{ url_for('register') }}">Cadastrar</a>
+        </div>
+    </div>
+</body>
+</html>

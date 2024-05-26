@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif; /* Defina a família de fontes para o corpo do documento */
+            background-color: #E0EFCC; /* Cor de fundo */
+            padding: 20px;
+        }
+        h1 {
+            text-align: center; /* Centralize o título */
+            color: #3D3D3D; /* Cor do texto */
+        }
+        form {
+            background-color: #bedbac; /* Cor de fundo do formulário */
+            max-width: 400px; /* Largura máxima do formulário */
+            margin: 0 auto; /* Centralize o formulário horizontalmente */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Adicione uma sombra suave */
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Garante que o preenchimento e a borda não aumentem a largura do elemento */
+        }
+        button {
+            background-color: #007bff; /* Cor de fundo do botão */
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3; /* Cor de fundo do botão ao passar o mouse */
+        }
+        a {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            color: #007bff; /* Cor do link */
+            margin-top: 10px; /* Adicione espaço acima do link */
+        }
+        a:hover {
+            text-decoration: underline; /* Sublinhe o link ao passar o mouse */
+        }
+    </style>
+</head>
+<body>
+    <h1>Cadastro</h1>
+    <form action="{{ url_for('register') }}" method="post">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="telefone">Telefone:</label>
+        <input type="text" id="telefone" name="telefone" required>
+        <label for="api_key">API Key:</label>
+        <input type="text" id="api_key" name="api_key" required>
+        <label for="planta_id">Planta ID:</label>
+        <input type="text" id="planta_id" name="planta_id" required>
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" name="senha" required>
+        <button type="submit">Cadastrar</button>
+    </form>
+    <a href="{{ url_for('login') }}">Já tem uma conta? Entre aqui.</a>
+</body>
+</html>
