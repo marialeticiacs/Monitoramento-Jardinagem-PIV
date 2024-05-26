@@ -6,6 +6,8 @@ O projeto visa desenvolver um sistema de monitoramento de jardinagem para a plan
 ### Estrutura do Projeto
 /ESP32: Contém os códigos para o ESP32, incluindo configurações de Wi-Fi e scripts de coleta de dados.
 
-/CallMeBot: Contém os códigos de integração com a API.
+/CallMeBot: Contém os códigos de integração com a API do CallMeBot.
 
 /Documentação: Documentação do projeto, incluindo diagramas de arquitetura, instruções de instalação, etc.
+
+/Website: Contém os arquivos relacionados ao site do projeto.
