@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        body {
+            background-color: #E0EFCC; /* Verde Claro */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Torna a página ocupar toda a altura da tela */
+            margin: 0; /* Remove margens padrão */
+            padding: 0; /* Remove preenchimento padrão */
+        }
+        .container {
+            display: flex;
+            flex-direction: column; /* Altera a direção do layout para empilhar elementos verticalmente */
+            align-items: center; /* Centraliza os elementos horizontalmente */
+            width: 100%;
+            max-width: 400px; /* Define a largura máxima */
+            padding: 20px;
+            background-color: #F5FFF0; /* Fundo Verde Muito Claro */
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra suave */
+            border: 4px dotted #006400; /* Verde Escuro */
+        }
+        .image-section {
+            text-align: center;
+            margin-bottom: 20px; /* Adiciona margem inferior */
+            margin-top: 20px; /* Adiciona margem superior */
+        }
+        .image-section img {
+            max-width: 120px; /* Define a largura máxima da imagem */
+            height: auto; /* Mantém a proporção da imagem */
+            margin-bottom: 10px; /* Adiciona margem inferior */
+        }
+        .login-section {
+            padding: 20px;
+            text-align: center; /* Centraliza o conteúdo do formulário */
+            width: 100%; /* Garante que o formulário ocupe toda a largura do container */
+        }
+        h1 {
+            color: #006400; /* Verde Escuro */
+            margin-bottom: 20px;
+        }
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+            width: 100%; /* Garante que o campo ocupe toda a largura disponível */
+        }
+        .input-container label {
+            color: #006400; /* Verde Escuro */
+            margin-bottom: 5px;
+            align-self: flex-start;
+        }
+        input[type="email"],
+        input[type="password"],
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Mantém o padding dentro do tamanho total */
+        }
+        button {
+            background-color: #006400; /* Verde Escuro */
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #004d00; /* Verde Mais Escuro */
+        }
+        .register-link {
+            text-align: center;
+            margin-top: 10px; /* Adiciona margem superior */
+        }
+        .register-link a {
+            text-decoration: none;
+            color: #006400; /* Verde Escuro */
+        }
+        .register-link a:hover {
+            text-decoration: underline; /* Sublinhar ao passar o mouse */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="image-section">
+            <img src="https://cdn-icons-png.flaticon.com/512/5509/5509636.png" alt="Login Icon">
+        </div>
+        <div class="login-section">
+            <form action="{{ url_for('login') }}" method="post">
+                <h1>Login</h1>
+                <div class="input-container">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="input-container">
+                    <label for="senha">Senha:</label>
+                    <input type="password" id="senha" name="senha" required>
+                </div>
+                <button type="submit">Entrar</button>
+                <div class="register-link">
+                    <a href="{{ url_for('register') }}">Cadastrar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

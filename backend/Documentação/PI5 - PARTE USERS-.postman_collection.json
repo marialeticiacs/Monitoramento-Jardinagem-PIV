@@ -1,0 +1,163 @@
+{
+	"info": {
+		"_postman_id": "b216954b-8f80-4ff3-93bc-4dbdaa2c4a58",
+		"name": "PI5 - PARTE USERS-",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17434015"
+	},
+	"item": [
+		{
+			"name": "Cadastrando Usuario",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"telefone\": \"5511968487960\",\r\n    \"api_key\": \"7724667\",\r\n    \"planta_id\": \"123\",\r\n    \"email\": \"luyza519@gmail.com\",\r\n    \"senha\": \"fatop\",\r\n    \"nome\": \"Luyza Brito De Paiva Lima\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/register_user",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"register_user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listando todos os Usuarios",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listar usuarios por email",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/user/luyza519@gmail.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"user",
+						"luyza519@gmail.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Atualiza por id",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"telefone\": \"+5511888888888\",\r\n    \"api_key\": \"new_api_key_here\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/api/users/66441648aa72895b4d4a8c32",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"66441648aa72895b4d4a8c32"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Deleta por id",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/api/users/66441648aa72895b4d4a8c32",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"api",
+						"users",
+						"66441648aa72895b4d4a8c32"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJmcmVzaCI6ZmFsc2UsImlhdCI6MTcxNTc0NDc5MSwianRpIjoiMDQwNTNhMWEtNzhkOS00YTFlLWE0ODYtNDIwOGM4NTE2YmYwIiwidHlwZSI6ImFjY2VzcyIsInN1YiI6Imx1eXphNTE5QGdtYWlsLmNvbSIsIm5iZiI6MTcxNTc0NDc5MSwiY3NyZiI6IjRiZGFlMjJlLWQyYTgtNDg2My1iZjk5LWNmNjBjMTdhODY1ZiIsImV4cCI6MTcxNTc0NTY5MX0.2CSy2DZpH8UIfcy0xNLMYHCjTciQtq_EW8DNVgbsmhE",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
