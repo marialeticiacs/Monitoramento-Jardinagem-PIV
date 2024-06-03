@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
             background-color: #F5F5F5; /* Cinza Claro */
-            color: #333;
+            color: #333333; /* Cinza Escuro */
             margin: 0;
             padding: 0;
         }
@@ -16,19 +17,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background-color: #E0EFCC; /* Verde Claro */
+            background-color: #C7E6A6; /* Verde Claro */
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .navbar a {
             padding: 14px 20px;
-            color: #006400; /* Verde Escuro */
+            color: #2E8B57; /* Verde Floresta */
             text-align: center;
             text-decoration: none;
             transition: background-color 0.3s;
             font-weight: bold; /* Negrito */
+            font-size: 16px; /* Tamanho da fonte */
         }
         .navbar a:hover {
-            background-color: #C6E48B; /* Verde Médio */
+            background-color: #6B8E23; /* Verde Médio */
             color: #fff; /* Branco */
         }
         .navbar-right {
@@ -53,26 +55,27 @@
             display: block;
         }
         h1, h2 {
-            color: #333; /* Cor de texto padrão */
+            color: #2E8B57; /* Verde Floresta */
+            font-size: 24px; /* Tamanho da fonte */
         }
         .button {
             display: inline-block;
             margin-top: 20px;
             padding: 10px 20px;
-            background-color: #673AB7; /* Roxo Escuro */
+            background-color: #6B8E23; /* Verde Médio */
             color: #FFFFFF; /* Branco */
             border: none;
             border-radius: 5px;
             text-decoration: none;
-            font-size: 16px;
+            font-size: 16px; /* Tamanho da fonte */
             cursor: pointer;
         }
         .button:hover {
-            background-color: #512DA8; /* Roxo Médio */
+            background-color: #2E8B57; /* Verde Floresta */
         }
         .alerta {
             color: #FFFFFF; /* Branco */
-            background-color: #E53935; /* Vermelho */
+            background-color: #DEB887; /* Marrom Claro */
             padding: 10px;
             border-radius: 5px;
             margin-bottom: 10px;
@@ -82,11 +85,24 @@
             padding: 0;
         }
         .suggestions-list li {
-            background-color: #EDE7F6; /* Laranja Claro */
+            background-color: #C7E6A6; /* Verde Claro */
             padding: 15px;
-            border: 1px solid #FFB74D; /* Laranja */
+            border: 1px solid #6B8E23; /* Verde Médio */
             border-radius: 8px;
             margin-bottom: 10px;
+            color: #333333; /* Cinza Escuro */
+        }
+        .feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 16px; /* Tamanho da fonte */
+        }
+        .feature-icon {
+            margin-right: 10px;
+        }
+        .feature-text {
+            font-weight: bold;
         }
     </style>
 </head>
@@ -114,13 +130,26 @@
             <p>Este projeto é desenvolvido como parte da disciplina Projeto Integrador V. Nossa aplicação web é projetada para ajudar os usuários a registrar, visualizar e gerenciar informações sobre suas plantas, com um foco especial em violetas. Com esta ferramenta, você pode acompanhar o crescimento das suas plantas visualizar dados importantes sobre sua saúde e receber recomendações personalizadas para cuidados, tudo em um único lugar.</p>
         
             <h2>Funcionalidades Principais:</h2>
-            <ul>
-                <li>Monitoramento em Tempo Real: Acompanhe a saúde das suas plantas com dados atualizados sobre temperatura, umidade do solo e outros parâmetros vitais.</li>
-                <li>Alertas e Notificações: Receba alertas instantâneos sobre condições adversas que possam afetar suas plantas, como temperatura extrema ou baixa umidade do solo.</li>
-                <li>Histórico e Estatísticas: Acesse o histórico completo de cuidados e veja estatísticas detalhadas para entender melhor o desenvolvimento das suas violetas ao longo do tempo.</li>
-                <li>Sugestões Personalizadas: Obtenha recomendações específicas para melhorar o cuidado com suas plantas, baseadas nos dados registrados.</li>
-                <!-- <li>Estatísticas detalhadas sobre o desenvolvimento das plantas.</li> -->
-            </ul>
+            <div class="feature">
+                <i class="fas fa-chart-line feature-icon"></i>
+                <span class="feature-text">Monitoramento:</span> Acompanhe a saúde das suas plantas com dados atualizados sobre temperatura, umidade do ambiente e umidade do solo.
+            </div>
+            <div class="feature">
+                <i class="fas fa-bell feature-icon"></i>
+                <span class="feature-text">Alertas:</span> Receba alertas instantâneos sobre condições adversas que possam afetar suas plantas, como temperatura extrema ou baixa umidade do solo.
+            </div>
+            <div class="feature">
+                <i class="fas fa-history feature-icon"></i>
+                <span class="feature-text">Histórico:</span> Acesse o histórico completo de cuidados para entender melhor o desenvolvimento das suas violetas ao longo do tempo.
+            </div>
+            <div class="feature">
+                <i class="fas fa-chart-bar feature-icon"></i>
+                <span class="feature-text">Estatísticas:</span> Visualize estatísticas detalhadas para monitorar o crescimento e saúde das suas plantas.
+            </div>
+            <div class="feature">
+                <i class="fas fa-lightbulb feature-icon"></i>
+                <span class="feature-text">Sugestões:</span> Obtenha recomendações específicas para melhorar o cuidado com suas plantas.
+            </div>
         
         </div>
         <!-- Monitoramento -->
