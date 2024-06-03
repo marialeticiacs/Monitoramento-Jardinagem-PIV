@@ -7,7 +7,7 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 client = MongoClient(app.config['MONGO_URI'])
-db = client['User']
+db = client['DB_PIV']
 
 jwt = JWTManager(app)
 

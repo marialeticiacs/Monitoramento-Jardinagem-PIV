@@ -23,12 +23,12 @@ def receive_data():
 
         now = datetime.now()
         if umidade_solo < 30:
-            if not ultimo_alerta or now - ultimo_alerta > timedelta(hours=6):
+            if not ultimo_alerta or now - ultimo_alerta > timedelta(hours=2):
                 alerta = True
                 enviar_mensagem_whatsapp(telefone, api_key, "Sua plantinha está com sede, regue-a o mais rápido possível.")
                 update_ultimo_alerta(planta_id)
         elif umidade_solo >= 30:
-            if ultimo_alerta and now - ultimo_alerta < timedelta(hours=6):
+            if ultimo_alerta and now - ultimo_alerta > timedelta(hours=2):
                 rega = True
                 enviar_mensagem_whatsapp(telefone, api_key, "Muito obrigado por regar sua plantinha!")
                 update_ultimo_alerta(planta_id)

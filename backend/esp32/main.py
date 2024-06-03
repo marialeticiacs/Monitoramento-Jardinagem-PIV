@@ -21,11 +21,10 @@ def collect_data():
     umidade_ar = dht11.humidity()
     temperatura = dht11.temperature()
     
-    pin_umidade_solo = 35
+    pin_umidade_solo = 34
     adc = ADC(Pin(pin_umidade_solo))
     umidade_solo = adc.read()
     umidade_solo_percent = int((4095 - umidade_solo) * 100 / 2175) 
-    print(umidade_solo_percent)
     return temperatura, umidade_ar, umidade_solo_percent
 
 def send_data_to_api(temperatura, umidade_ar, umidade_solo_percent):
@@ -34,7 +33,7 @@ def send_data_to_api(temperatura, umidade_ar, umidade_solo_percent):
         'temperatura_ambiente': temperatura,
         'umidade_ar': umidade_ar,
         'umidade_solo': umidade_solo_percent,
-        'planta_id': '1234',  # ID da planta
+        'planta_id': '1',  # ID da planta
         'timestamp': time.time()
     }
     
