@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 import requests
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 app.secret_key = 'supersecretkey'
 
 API_URL = 'http://localhost:5002/api'
@@ -48,6 +50,9 @@ def home():
         return redirect(url_for('login'))
     return render_template('home.html')
 
+@app.route('/graph')
+def graficos():
+    return render_template('graph.html')
 
 if __name__ == '__main__':
     app.run(port=5001, debug=True)

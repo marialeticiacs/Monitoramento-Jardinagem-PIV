@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráficos de Sensores</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <h1>Histórico de Sensores</h1>
+    
+    <div id="temperature-graph" style="width: 100%; height: 400px;"></div>
+    <div id="soil-moisture-graph" style="width: 100%; height: 400px;"></div>
+    <div id="air-humidity-graph" style="width: 100%; height: 400px;"></div>
+
+    <script>
+        function fetchData(url) {
+            return fetch(url)
+                .then(response => response.json())
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function plotGraph(elementId, title, xData, yData, yTitle) {
+            const trace = {
+                x: xData,
+                y: yData,
+                mode: 'lines+markers',
+                type: 'scatter'
+            };
+
+            const layout = {
+                title: title,
+                xaxis: { title: 'Data e Hora' },
+                yaxis: { title: yTitle }
+            };
+
+            Plotly.newPlot(elementId, [trace], layout);
+        }
+
+        fetchData('http://localhost:5002/api/get_temperature_data').then(data => {
+            const dates = data.map(entry => entry.data_hora);
+            const temperatures = data.map(entry => entry.temperatura_ambiente);
+            plotGraph('temperature-graph', 'Histórico de Temperaturas Ambiente', dates, temperatures, 'Temperatura (°C)');
+        });
+
+        fetchData('http://localhost:5002/api/get_soil_moisture_data').then(data => {
+            const dates = data.map(entry => entry.data_hora);
+            const soilMoistures = data.map(entry => entry.umidade_solo);
+            plotGraph('soil-moisture-graph', 'Histórico de Umidade do Solo', dates, soilMoistures, 'Umidade do Solo (%)');
+        });
+
+        fetchData('http://localhost:5002/api/get_air_humidity_data').then(data => {
+            const dates = data.map(entry => entry.data_hora);
+            const airHumidities = data.map(entry => entry.umidade_ar);
+            plotGraph('air-humidity-graph', 'Histórico de Umidade do Ar', dates, airHumidities, 'Umidade do Ar (%)');
+        });
+    </script>
+</body>
+</html>

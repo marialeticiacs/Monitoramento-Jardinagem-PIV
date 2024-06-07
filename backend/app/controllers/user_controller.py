@@ -62,3 +62,5 @@ def delete_user(user_id):
         return jsonify({"status": "usuario deletado"}), 200
     else:
         return jsonify({"status": "error", "message": "Falha"}), 400
+
+
