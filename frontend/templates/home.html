@@ -4,7 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.css' rel='stylesheet' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.js'></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> 
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -104,6 +107,39 @@
         .feature-text {
             font-weight: bold;
         }
+        #calendar {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+        #historico-tabela {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 18px;
+            text-align: left;
+        }
+        #historico-tabela thead tr {
+            background-color: #6B8E23; /* Verde Médio */
+            color: #ffffff; /* Branco */
+            text-align: left;
+            font-weight: bold;
+        }
+        #historico-tabela th, #historico-tabela td {
+            padding: 12px 15px;
+        }
+        #historico-tabela tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+        #historico-tabela tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+        #historico-tabela tbody tr:last-of-type {
+            border-bottom: 2px solid #6B8E23;
+        }
+        #historico-tabela tbody tr:hover {
+            background-color: #f1f1f1;
+        }
     </style>
 </head>
 <body>
@@ -114,7 +150,7 @@
             <a href="#monitoramento" onclick="showSection('monitoramento')">Monitoramento</a>
             <a href="#alertas" onclick="showSection('alertas')">Alertas</a>
             <a href="#historico" onclick="showSection('historico')">Histórico</a>
-            <a href="/graph">Estatísticas</a>
+            <a href="#estatisticas" onclick="showSection('estatisticas')">Estatísticas</a>
             <a href="#sugestoes" onclick="showSection('sugestoes')">Sugestões</a>
         </div>
         <div class="navbar-right">
@@ -171,13 +207,29 @@
         <!-- Histórico de Dados -->
         <div id="historico" class="section">
             <h2>Histórico de Dados</h2>
-            <div id="grafico-historico"></div>
+            <div id="calendar"></div>
+            <table id="historico-tabela">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Temperatura Média (°C)</th>
+                        <th>Umidade Média do Solo (%)</th>
+                        <th>Umidade Média do Ar (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dados serão preenchidos aqui -->
+                </tbody>
+            </table>
         </div>
+
 
         <!-- Estatísticas -->
         <div id="estatisticas" class="section">
             <h2>Painel Interativo de Estatísticas</h2>
-            <div id="grafico"></div>
+            <div id="temperature-graph" style="width: 100%; height: 400px;"></div>
+            <div id="soil-moisture-graph" style="width: 100%; height: 400px;"></div>
+            <div id="air-humidity-graph" style="width: 100%; height: 400px;"></div>
         </div>
 
         <!-- Sugestões -->
@@ -193,6 +245,190 @@
         </div>
     </div>
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function fetchSensorData() {
+                fetch('http://localhost:5002/api/get_latest_sensor_data')
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.temperatura && data.umidade_solo) {
+                            document.getElementById('temperatura').textContent = data.temperatura ;
+                            document.getElementById('umidade-solo').textContent = data.umidade_solo;
+                        }
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            }
+    
+            fetchSensorData();
+            setInterval(fetchSensorData, 30000);
+        });
+    </script>
+
+    <script>
+        function fetchData(url) {
+            return fetch(url)
+                .then(response => response.json())
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function plotGraph(elementId, title, xData, yData, yTitle) {
+            const trace = {
+                x: xData,
+                y: yData,
+                mode: 'lines+markers',
+                type: 'scatter'
+            };
+
+            const layout = {
+                title: title,
+                autosize: true,
+                xaxis: { title: 'Data e Hora' },
+                yaxis: { title: yTitle },
+                margin: { l: 50, r: 50, t: 45, b: 50 }
+            };
+
+            Plotly.newPlot(elementId, [trace], layout);
+        }
+
+        // Adaptar URLs conforme necessário
+        fetchData('http://localhost:5002/api/get_temperature_data').then(data => {
+            const dates = data.map(entry => entry.data_hora);
+            const temperatures = data.map(entry => entry.temperatura_ambiente);
+            plotGraph('temperature-graph', 'Histórico de Temperaturas Ambiente', dates, temperatures, 'Temperatura (°C)');
+        });
+
+        fetchData('http://localhost:5002/api/get_soil_moisture_data').then(data => {
+            const dates = data.map(entry => entry.data_hora);
+            const soilMoistures = data.map(entry => entry.umidade_solo);
+            plotGraph('soil-moisture-graph', 'Histórico de Umidade do Solo', dates, soilMoistures, 'Umidade do Solo (%)');
+        });
+
+        fetchData('http://localhost:5002/api/get_air_humidity_data').then(data => {
+            const dates = data.map(entry => entry.data_hora);
+            const airHumidities = data.map(entry => entry.umidade_ar);
+            plotGraph('air-humidity-graph', 'Histórico de Umidade do Ar', dates, airHumidities, 'Umidade do Ar (%)');
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    fetch('http://localhost:5002/api/get_sensor_data')
+                        .then(response => response.json())
+                        .then(data => {
+                            var events = data.map(function(event) {
+                                return {
+                                    title: `Umidade Ar: ${event.umidade_ar}, Umidade Solo: ${event.umidade_solo}, Temperatura: ${event.temperatura_ambiente}`,
+                                    start: event.data_hora,
+                                    extendedProps: {
+                                        umidade_ar: event.umidade_ar,
+                                        umidade_solo: event.umidade_solo,
+                                        temperatura: event.temperatura_ambiente
+                                    }
+                                };
+                            });
+                            successCallback(events);
+                        })
+                        .catch(error => failureCallback(error));
+                },
+                eventMouseEnter: function(info) {
+                    var tooltip = document.createElement('div');
+                    tooltip.classList.add('tooltip');
+                    tooltip.style.position = 'absolute';
+                    tooltip.style.zIndex = '10001';
+                    tooltip.innerHTML = `<strong>Umidade do Ar:</strong> ${info.event.extendedProps.umidade_ar}%<br>
+                                         <strong>Umidade do Solo:</strong> ${info.event.extendedProps.umidade_solo}%<br>
+                                         <strong>Temperatura:</strong> ${info.event.extendedProps.temperatura}°C`;
+                    document.body.appendChild(tooltip);
+
+                    info.el.addEventListener('mousemove', function(e) {
+                        tooltip.style.left = e.pageX + 'px';
+                        tooltip.style.top = e.pageY + 'px';
+                    });
+                },
+                eventMouseLeave: function() {
+                    var tooltips = document.querySelectorAll('.tooltip');
+                    tooltips.forEach(function(tooltip) {
+                        tooltip.remove();
+                    });
+                }
+            });
+
+            calendar.render();
+        });
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function fetchData(url) {
+            return fetch(url)
+                .then(response => response.json())
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function isWithinLast7Days(date) {
+            const now = new Date();
+            const past7Days = new Date(now.setDate(now.getDate() - 7));
+            return new Date(date) >= past7Days;
+        }
+
+        function calculateDailyAverages(data) {
+            const dailyData = {};
+
+            data.forEach(entry => {
+                const date = new Date(entry.data_hora).toISOString().split('T')[0];
+
+                if (!dailyData[date]) {
+                    dailyData[date] = {
+                        temperatureSum: 0,
+                        soilMoistureSum: 0,
+                        airHumiditySum: 0,
+                        count: 0
+                    };
+                }
+
+                dailyData[date].temperatureSum += entry.temperatura_ambiente;
+                dailyData[date].soilMoistureSum += entry.umidade_solo;
+                dailyData[date].airHumiditySum += entry.umidade_ar;
+                dailyData[date].count += 1;
+            });
+
+            return Object.keys(dailyData).map(date => {
+                const dailyEntry = dailyData[date];
+                return {
+                    date: date,
+                    avgTemperature: (dailyEntry.temperatureSum / dailyEntry.count).toFixed(2),
+                    avgSoilMoisture: (dailyEntry.soilMoistureSum / dailyEntry.count).toFixed(2),
+                    avgAirHumidity: (dailyEntry.airHumiditySum / dailyEntry.count).toFixed(2)
+                };
+            });
+        }
+
+        fetchData('http://localhost:5002/api/get_sensor_data').then(data => {
+            const tabelaBody = document.getElementById('historico-tabela').getElementsByTagName('tbody')[0];
+            const recentData = data.filter(entry => isWithinLast7Days(entry.data_hora));
+            const dailyAverages = calculateDailyAverages(recentData);
+
+            dailyAverages.forEach(entry => {
+                const row = tabelaBody.insertRow();
+                const cellDate = row.insertCell(0);
+                const cellAvgTemperature = row.insertCell(1);
+                const cellAvgSoilMoisture = row.insertCell(2);
+                const cellAvgAirHumidity = row.insertCell(3);
+
+                cellDate.textContent = entry.date;
+                cellAvgTemperature.textContent = entry.avgTemperature;
+                cellAvgSoilMoisture.textContent = entry.avgSoilMoisture;
+                cellAvgAirHumidity.textContent = entry.avgAirHumidity;
+            });
+        });
+    });
+
+    </script>
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
