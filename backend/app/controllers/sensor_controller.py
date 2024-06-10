@@ -26,11 +26,12 @@ def receive_data():
         if umidade_solo < 30:
             if not ultimo_alerta or now - ultimo_alerta > timedelta(hours=2):
                 alerta = True
+                rega = False
                 enviar_mensagem_whatsapp(telefone, api_key, "Sua plantinha está com sede, regue-a o mais rápido possível.")
                 update_ultimo_alerta(planta_id)
         elif umidade_solo >= 30:
+            alerta = False
             if ultimo_alerta and now - ultimo_alerta > timedelta(hours=2):
-                rega = True
                 enviar_mensagem_whatsapp(telefone, api_key, "Muito obrigado por regar sua plantinha!")
                 update_ultimo_alerta(planta_id)
 
@@ -43,7 +44,8 @@ def get_latest_sensor_data():
         data = next(sensor_data)
         return jsonify({
             'temperatura': data['temperatura_ambiente'],
-            'umidade_solo': data['umidade_solo']
+            'umidade_solo': data['umidade_solo'],
+            'alerta': data.get('alerta')  # Adicione a informação sobre o alerta
         }), 200
     except StopIteration:
         return jsonify({'error': 'No data found'}), 404
