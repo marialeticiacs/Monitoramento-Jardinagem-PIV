@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Monitoramento de Jardinagem</title>
     <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.css' rel='stylesheet' />
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.js'></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
@@ -105,7 +105,12 @@
             margin-right: 10px;
         }
         .feature-text {
+            display: flex;
+        }
+
+        .feature-title {
             font-weight: bold;
+            margin-right: 5px; /* Adiciona um pequeno espaço entre o título em negrito e o texto normal */
         }
         #calendar {
             max-width: 900px;
@@ -197,8 +202,7 @@
             width: 100%;
             height: 300px; /* Altura dos gráficos */
         }
-
-        /* Aplica a cor vermelha aos <h3> dentro da seção de estatísticas */
+        
         #estatisticas h3 {
             color: #8dbd5a;
         }
@@ -230,23 +234,23 @@
             <h2>Funcionalidades Principais:</h2>
             <div class="feature">
                 <i class="fas fa-chart-line feature-icon"></i>
-                <span class="feature-text">Monitoramento:</span> Acompanhe a saúde das suas plantas com dados atualizados sobre temperatura e umidade do solo.
+                <span class="feature-text"><span class="feature-title">Monitoramento:</span> Acompanhe a saúde das suas plantas com dados atualizados sobre temperatura e umidade do solo.</span>
             </div>
             <div class="feature">
                 <i class="fas fa-bell feature-icon"></i>
-                <span class="feature-text">Alertas:</span> Receba alertas instantâneos sobre condições adversas que possam afetar suas plantas, como baixa umidade do solo.
+                <span class="feature-text"><span class="feature-title">Alertas:</span> Receba alertas instantâneos sobre condições adversas que possam afetar suas plantas, como baixa umidade do solo.</span>
             </div>
             <div class="feature">
                 <i class="fas fa-history feature-icon"></i>
-                <span class="feature-text">Histórico:</span> Acesse o histórico completo de cuidados para entender melhor o desenvolvimento das suas violetas ao longo do tempo.
+                <span class="feature-text"><span class="feature-title">Histórico:</span> Acesse o histórico completo de cuidados para entender melhor o desenvolvimento das suas violetas ao longo do tempo.</span>
             </div>
             <div class="feature">
                 <i class="fas fa-chart-bar feature-icon"></i>
-                <span class="feature-text">Estatísticas:</span> Visualize estatísticas detalhadas para monitorar o crescimento e saúde das suas plantas.
+                <span class="feature-text"><span class="feature-title">Estatísticas:</span> Visualize estatísticas detalhadas para monitorar o crescimento e saúde das suas plantas.</span>
             </div>
             <div class="feature">
                 <i class="fas fa-lightbulb feature-icon"></i>
-                <span class="feature-text">Sugestões:</span> Obtenha recomendações específicas para melhorar o cuidado com suas plantas.
+                <span class="feature-text"><span class="feature-title">Sugestões:</span> Obtenha recomendações específicas para melhorar o cuidado com suas plantas.</span>
             </div>
         
         </div>
@@ -414,7 +418,6 @@
             Plotly.newPlot(elementId, [trace], layout);
         }
 
-        // Adaptar URLs conforme necessário
         fetchData('http://localhost:5002/api/get_temperature_data').then(data => {
             const dates = data.map(entry => entry.data_hora);
             const temperatures = data.map(entry => entry.temperatura_ambiente);
@@ -544,12 +547,17 @@
                 const cellAvgSoilMoisture = row.insertCell(2);
                 const cellAvgAirHumidity = row.insertCell(3);
 
-                cellDate.textContent = entry.date;
+                // Formatar data
+                const dateParts = entry.date.split('-');
+                const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+
+                cellDate.textContent = formattedDate;
                 cellAvgTemperature.textContent = entry.avgTemperature;
                 cellAvgSoilMoisture.textContent = entry.avgSoilMoisture;
                 cellAvgAirHumidity.textContent = entry.avgAirHumidity;
             });
         });
+
     });
 
     </script>
