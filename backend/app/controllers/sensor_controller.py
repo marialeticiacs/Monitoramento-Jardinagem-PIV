@@ -45,6 +45,7 @@ def get_latest_sensor_data():
         return jsonify({
             'temperatura': data['temperatura_ambiente'],
             'umidade_solo': data['umidade_solo'],
+            'data_hora' : data['data_hora'],
             'alerta': data.get('alerta')  # Adicione a informação sobre o alerta
         }), 200
     except StopIteration:

@@ -198,7 +198,10 @@
             height: 300px; /* Altura dos gráficos */
         }
 
-
+        /* Aplica a cor vermelha aos <h3> dentro da seção de estatísticas */
+        #estatisticas h3 {
+            color: #8dbd5a;
+        }
     </style>
 </head>
 <body>
@@ -312,18 +315,18 @@
         <div class="section" id="estatisticas">
             <h2>Painel Interativo de Estatísticas</h2>
             <div class="chart-container">
-                <h3>Temperatura Média</h3>
+                <h3>Temperatura X Tempo</h3>
                 <div id="temperature-graph" class="chart"></div>
             </div>
             <div class="chart-container">
-                <h3>Umidade Média do Solo</h3>
+                <h3>Umidade do Solo X Tempo</h3>
                 <div id="soil-moisture-graph" class="chart"></div>
             </div>
             <div class="chart-container">
-                <h3>Umidade Média do Ar</h3>
+                <h3>Umidade do Ar X Tempo</h3>
                 <div id="air-humidity-graph" class="chart"></div>
             </div>
-        </div>        
+        </div>       
         
         <!-- Sugestões -->
         <div id="sugestoes" class="section">
@@ -345,30 +348,44 @@
                     .then(response => response.json())
                     .then(data => {
                         if(data.temperatura && data.umidade_solo) {
-                            document.getElementById('temperatura').textContent = data.temperatura ;
+                            document.getElementById('temperatura').textContent = data.temperatura;
                             document.getElementById('umidade-solo').textContent = data.umidade_solo;
-                            document.getElementById('ultima-atualizacao').textContent = new Date().toLocaleString();
-                            document.getElementById('ultima-atualizacao-alertas').textContent = new Date().toLocaleString(); // Adicionado
-                            
+
+                            // Formata a data/hora
+                            var date = new Date(data.data_hora);
+                            var formattedDate = formatDate(date);
+
+                            document.getElementById('ultima-atualizacao').textContent = formattedDate;
+                            document.getElementById('ultima-atualizacao-alertas').textContent = formattedDate;
+
                             const alertContainer = document.getElementById('alertas-container');
-                            
+
                             // Verifica se há um alerta ativo
                             if (data.alerta == true) {
                                 // Exibe uma mensagem de alerta
                                 alertContainer.innerHTML = '<div style="background-color: #ff6666; color: #000000; padding: 10px; border-radius: 5px; border: 1px solid #ff0000;">Atenção: A umidade do solo está abaixo de 30%! Por favor, regue sua planta.</div>';
-                            } 
-                            else {
+                            } else {
                                 alertContainer.innerHTML = '<div style="background-color: #C7E6A6; color: #000000; border: 1px solid #6B8E23; padding: 10px; border-radius: 5px;">A umidade do solo está adequada. Continue cuidando da sua planta!</div>';
-                            }          
-                            
+                            }
                         }
                     })
                     .catch(error => console.error('Error fetching data:', error));
             }
-    
+
+            function formatDate(date) {
+                var day = String(date.getUTCDate()).padStart(2, '0');
+                var month = String(date.getUTCMonth() + 1).padStart(2, '0');
+                var year = date.getUTCFullYear();
+                var hours = String(date.getUTCHours()).padStart(2, '0');
+                var minutes = String(date.getUTCMinutes()).padStart(2, '0');
+                var seconds = String(date.getUTCSeconds()).padStart(2, '0');
+                return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+            }
+
             fetchSensorData();
             setInterval(fetchSensorData, 30000);
         });
+
     </script>
 
     <script>
@@ -536,7 +553,7 @@
     });
 
     </script>
-    <!-- Scripts -->
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Função para mostrar a seção ativa
