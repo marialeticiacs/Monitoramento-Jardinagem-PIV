@@ -3,8 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Monitoramento de Jardinagem</title>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.css' rel='stylesheet' />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.js'></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> 
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -102,7 +105,106 @@
             margin-right: 10px;
         }
         .feature-text {
+            display: flex;
+        }
+
+        .feature-title {
             font-weight: bold;
+            margin-right: 5px; /* Adiciona um pequeno espaço entre o título em negrito e o texto normal */
+        }
+        #calendar {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+        #historico-tabela {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 18px;
+            text-align: left;
+        }
+        #historico-tabela thead tr {
+            background-color: #C7E6A6; /* Verde Médio */
+            color: #2E8B57; /* Branco */
+            text-align: left;
+            font-weight: bold;
+        }
+        #historico-tabela th, #historico-tabela td {
+            padding: 12px 15px;
+        }
+        #historico-tabela tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+        #historico-tabela tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+        #historico-tabela tbody tr:last-of-type {
+            border-bottom: 2px solid #C7E6A6;
+        }
+        #historico-tabela tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        /* Monitoramento */
+        #monitoramento {
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .monitoramento-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sensor {
+            margin: 0 20px;
+        }
+
+        .sensor-icon {
+            font-size: 40px;
+            color: #2E8B57; /* Verde Floresta */
+        }
+
+        .sensor-data {
+            margin-top: 10px;
+        }
+
+        .sensor-label {
+            font-size: 18px;
+            color: #333333; /* Cinza Escuro */
+        }
+
+        .sensor-value {
+            font-size: 24px;
+            color: #6B8E23; /* Verde Médio */
+            font-weight: bold;
+        }
+
+        .sensor-data {
+        text-align: center;
+        }
+
+        .last-updated-bottom {
+            text-align: right;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #777;
+        }
+
+        .chart-container {
+            width: 100%; /* Ocupa toda a largura */
+            margin-bottom: 20px; /* Espaçamento entre os gráficos */
+        }
+
+        .chart {
+            width: 100%;
+            height: 300px; /* Altura dos gráficos */
+        }
+        
+        #estatisticas h3 {
+            color: #8dbd5a;
         }
     </style>
 </head>
@@ -114,7 +216,7 @@
             <a href="#monitoramento" onclick="showSection('monitoramento')">Monitoramento</a>
             <a href="#alertas" onclick="showSection('alertas')">Alertas</a>
             <a href="#historico" onclick="showSection('historico')">Histórico</a>
-            <a href="/graph">Estatísticas</a>
+            <a href="#estatisticas" onclick="showSection('estatisticas')">Estatísticas</a>
             <a href="#sugestoes" onclick="showSection('sugestoes')">Sugestões</a>
         </div>
         <div class="navbar-right">
@@ -127,59 +229,109 @@
         <!-- Apresentação -->
         <div id="apresentacao" class="section active">
             <h1><center>Bem-vindo ao Monitoramento de Jardinagem!</center></h1>
-            <p>Este projeto é desenvolvido como parte da disciplina Projeto Integrador V. Nossa aplicação web é projetada para ajudar os usuários a registrar, visualizar e gerenciar informações sobre suas plantas, com um foco especial em violetas. Com esta ferramenta, você pode acompanhar o crescimento das suas plantas visualizar dados importantes sobre sua saúde e receber recomendações personalizadas para cuidados, tudo em um único lugar.</p>
+            <p>Este projeto foi desenvolvido como parte da disciplina Projeto Integrador V. Nossa aplicação web é projetada para ajudar os usuários a visualizar e gerenciar informações sobre suas plantas, com um foco especial em violetas. Com esta ferramenta, você pode acompanhar o crescimento das suas plantas, visualizar dados importantes sobre sua saúde e receber recomendações personalizadas para cuidados, tudo em um único lugar.</p>
         
             <h2>Funcionalidades Principais:</h2>
             <div class="feature">
                 <i class="fas fa-chart-line feature-icon"></i>
-                <span class="feature-text">Monitoramento:</span> Acompanhe a saúde das suas plantas com dados atualizados sobre temperatura, umidade do ambiente e umidade do solo.
+                <span class="feature-text"><span class="feature-title">Monitoramento:</span> Acompanhe a saúde das suas plantas com dados atualizados sobre temperatura e umidade do solo.</span>
             </div>
             <div class="feature">
                 <i class="fas fa-bell feature-icon"></i>
-                <span class="feature-text">Alertas:</span> Receba alertas instantâneos sobre condições adversas que possam afetar suas plantas, como temperatura extrema ou baixa umidade do solo.
+                <span class="feature-text"><span class="feature-title">Alertas:</span> Receba alertas instantâneos sobre condições adversas que possam afetar suas plantas, como baixa umidade do solo.</span>
             </div>
             <div class="feature">
                 <i class="fas fa-history feature-icon"></i>
-                <span class="feature-text">Histórico:</span> Acesse o histórico completo de cuidados para entender melhor o desenvolvimento das suas violetas ao longo do tempo.
+                <span class="feature-text"><span class="feature-title">Histórico:</span> Acesse o histórico completo de cuidados para entender melhor o desenvolvimento das suas violetas ao longo do tempo.</span>
             </div>
             <div class="feature">
                 <i class="fas fa-chart-bar feature-icon"></i>
-                <span class="feature-text">Estatísticas:</span> Visualize estatísticas detalhadas para monitorar o crescimento e saúde das suas plantas.
+                <span class="feature-text"><span class="feature-title">Estatísticas:</span> Visualize estatísticas detalhadas para monitorar o crescimento e saúde das suas plantas.</span>
             </div>
             <div class="feature">
                 <i class="fas fa-lightbulb feature-icon"></i>
-                <span class="feature-text">Sugestões:</span> Obtenha recomendações específicas para melhorar o cuidado com suas plantas.
+                <span class="feature-text"><span class="feature-title">Sugestões:</span> Obtenha recomendações específicas para melhorar o cuidado com suas plantas.</span>
             </div>
         
         </div>
         <!-- Monitoramento -->
         <div id="monitoramento" class="section">
             <h2>Monitoramento em Tempo Real</h2>
-            <p>Dados atuais da violeta:</p>
-            <ul>
-                <li>Temperatura: <span id="temperatura">-</span> °C</li>
-                <li>Umidade do Solo: <span id="umidade-solo">-</span> %</li>
-            </ul>
+            <div class="monitoramento-container">
+                <!-- Sensor de Temperatura -->
+                <div class="sensor">
+                    <div class="sensor-icon">
+                        <i class="fas fa-thermometer-half"></i>
+                    </div>
+                    <div class="sensor-data">
+                        <div class="sensor-label">Temperatura (°C)</div>
+                        <div class="sensor-value" id="temperatura">--</div>
+                    </div>
+                </div>
+                <!-- Sensor de Umidade do Solo -->
+                <div class="sensor">
+                    <div class="sensor-icon">
+                        <i class="fas fa-tint"></i>
+                    </div>
+                    <div class="sensor-data">
+                        <div class="sensor-label">Umidade do Solo (%)</div>
+                        <div class="sensor-value" id="umidade-solo">--</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Última atualização no final -->
+            <div class="last-updated-bottom">
+                <i class="far fa-clock"></i> <span id="ultima-atualizacao">--</span>
+            </div>
         </div>
 
         <!-- Alertas -->
         <div id="alertas" class="section">
             <h2>Alertas e Notificações</h2>
             <div id="alertas-container"></div>
+            <!-- Última atualização no final -->
+            <div class="last-updated-bottom">
+                <i class="far fa-clock"></i> <span id="ultima-atualizacao-alertas">--</span>
+            </div>
         </div>
 
         <!-- Histórico de Dados -->
         <div id="historico" class="section">
             <h2>Histórico de Dados</h2>
-            <div id="grafico-historico"></div>
+            <div id="calendar"></div>
+            <table id="historico-tabela">
+                <thead>
+                    <tr>
+                        <th>Data</th>
+                        <th>Temperatura Média (°C)</th>
+                        <th>Umidade Média do Solo (%)</th>
+                        <th>Umidade Média do Ar (%)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dados serão preenchidos aqui -->
+                </tbody>
+            </table>
         </div>
+
 
         <!-- Estatísticas -->
-        <div id="estatisticas" class="section">
+        <div class="section" id="estatisticas">
             <h2>Painel Interativo de Estatísticas</h2>
-            <div id="grafico"></div>
-        </div>
-
+            <div class="chart-container">
+                <h3>Temperatura X Tempo</h3>
+                <div id="temperature-graph" class="chart"></div>
+            </div>
+            <div class="chart-container">
+                <h3>Umidade do Solo X Tempo</h3>
+                <div id="soil-moisture-graph" class="chart"></div>
+            </div>
+            <div class="chart-container">
+                <h3>Umidade do Ar X Tempo</h3>
+                <div id="air-humidity-graph" class="chart"></div>
+            </div>
+        </div>       
+        
         <!-- Sugestões -->
         <div id="sugestoes" class="section">
             <h2>Sugestões para Melhorar o Cuidado com a Violeta</h2>
@@ -193,7 +345,223 @@
         </div>
     </div>
 
-    <!-- Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function fetchSensorData() {
+                fetch('http://localhost:5002/api/get_latest_sensor_data')
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.temperatura && data.umidade_solo) {
+                            document.getElementById('temperatura').textContent = data.temperatura;
+                            document.getElementById('umidade-solo').textContent = data.umidade_solo;
+
+                            // Formata a data/hora
+                            var date = new Date(data.data_hora);
+                            var formattedDate = formatDate(date);
+
+                            document.getElementById('ultima-atualizacao').textContent = formattedDate;
+                            document.getElementById('ultima-atualizacao-alertas').textContent = formattedDate;
+
+                            const alertContainer = document.getElementById('alertas-container');
+
+                            // Verifica se há um alerta ativo
+                            if (data.alerta == true) {
+                                // Exibe uma mensagem de alerta
+                                alertContainer.innerHTML = '<div style="background-color: #ff6666; color: #000000; padding: 10px; border-radius: 5px; border: 1px solid #ff0000;">Atenção: A umidade do solo está abaixo de 30%! Por favor, regue sua planta.</div>';
+                            } else {
+                                alertContainer.innerHTML = '<div style="background-color: #C7E6A6; color: #000000; border: 1px solid #6B8E23; padding: 10px; border-radius: 5px;">A umidade do solo está adequada. Continue cuidando da sua planta!</div>';
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error fetching data:', error));
+            }
+
+            function formatDate(date) {
+                var day = String(date.getUTCDate()).padStart(2, '0');
+                var month = String(date.getUTCMonth() + 1).padStart(2, '0');
+                var year = date.getUTCFullYear();
+                var hours = String(date.getUTCHours()).padStart(2, '0');
+                var minutes = String(date.getUTCMinutes()).padStart(2, '0');
+                var seconds = String(date.getUTCSeconds()).padStart(2, '0');
+                return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+            }
+
+            fetchSensorData();
+            setInterval(fetchSensorData, 30000);
+        });
+
+    </script>
+
+    <script>
+        function fetchData(url) {
+            return fetch(url)
+                .then(response => response.json())
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function plotGraph(elementId, title, xData, yData, yTitle) {
+            const trace = {
+                x: xData,
+                y: yData,
+                mode: 'lines+markers',
+                type: 'scatter'
+            };
+
+            const layout = {
+                title: title,
+                autosize: true,
+                xaxis: { title: 'Data e Hora' },
+                yaxis: { title: yTitle },
+                margin: { l: 50, r: 50, t: 45, b: 50 }
+            };
+
+            Plotly.newPlot(elementId, [trace], layout);
+        }
+
+        fetchData('http://localhost:5002/api/get_temperature_data').then(data => {
+            const dates = data.map(entry => entry.data_hora);
+            const temperatures = data.map(entry => entry.temperatura_ambiente);
+            plotGraph('temperature-graph', 'Histórico de Temperaturas Ambiente', dates, temperatures, 'Temperatura (°C)');
+        });
+
+        fetchData('http://localhost:5002/api/get_soil_moisture_data').then(data => {
+            const dates = data.map(entry => entry.data_hora);
+            const soilMoistures = data.map(entry => entry.umidade_solo);
+            plotGraph('soil-moisture-graph', 'Histórico de Umidade do Solo', dates, soilMoistures, 'Umidade do Solo (%)');
+        });
+
+        fetchData('http://localhost:5002/api/get_air_humidity_data').then(data => {
+            const dates = data.map(entry => entry.data_hora);
+            const airHumidities = data.map(entry => entry.umidade_ar);
+            plotGraph('air-humidity-graph', 'Histórico de Umidade do Ar', dates, airHumidities, 'Umidade do Ar (%)');
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    fetch('http://localhost:5002/api/get_sensor_data')
+                        .then(response => response.json())
+                        .then(data => {
+                            var events = data.map(function(event) {
+                                return {
+                                    title: `Umidade Ar: ${event.umidade_ar}, Umidade Solo: ${event.umidade_solo}, Temperatura: ${event.temperatura_ambiente}`,
+                                    start: event.data_hora,
+                                    extendedProps: {
+                                        umidade_ar: event.umidade_ar,
+                                        umidade_solo: event.umidade_solo,
+                                        temperatura: event.temperatura_ambiente
+                                    }
+                                };
+                            });
+                            successCallback(events);
+                        })
+                        .catch(error => failureCallback(error));
+                },
+                eventMouseEnter: function(info) {
+                    var tooltip = document.createElement('div');
+                    tooltip.classList.add('tooltip');
+                    tooltip.style.position = 'absolute';
+                    tooltip.style.zIndex = '10001';
+                    tooltip.innerHTML = `<strong>Umidade do Ar:</strong> ${info.event.extendedProps.umidade_ar}%<br>
+                                         <strong>Umidade do Solo:</strong> ${info.event.extendedProps.umidade_solo}%<br>
+                                         <strong>Temperatura:</strong> ${info.event.extendedProps.temperatura}°C`;
+                    document.body.appendChild(tooltip);
+
+                    info.el.addEventListener('mousemove', function(e) {
+                        tooltip.style.left = e.pageX + 'px';
+                        tooltip.style.top = e.pageY + 'px';
+                    });
+                },
+                eventMouseLeave: function() {
+                    var tooltips = document.querySelectorAll('.tooltip');
+                    tooltips.forEach(function(tooltip) {
+                        tooltip.remove();
+                    });
+                }
+            });
+
+            calendar.render();
+        });
+    </script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function fetchData(url) {
+            return fetch(url)
+                .then(response => response.json())
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function isWithinLast7Days(date) {
+            const now = new Date();
+            const past7Days = new Date(now.setDate(now.getDate() - 7));
+            return new Date(date) >= past7Days;
+        }
+
+        function calculateDailyAverages(data) {
+            const dailyData = {};
+
+            data.forEach(entry => {
+                const date = new Date(entry.data_hora).toISOString().split('T')[0];
+
+                if (!dailyData[date]) {
+                    dailyData[date] = {
+                        temperatureSum: 0,
+                        soilMoistureSum: 0,
+                        airHumiditySum: 0,
+                        count: 0
+                    };
+                }
+
+                dailyData[date].temperatureSum += entry.temperatura_ambiente;
+                dailyData[date].soilMoistureSum += entry.umidade_solo;
+                dailyData[date].airHumiditySum += entry.umidade_ar;
+                dailyData[date].count += 1;
+            });
+
+            return Object.keys(dailyData).map(date => {
+                const dailyEntry = dailyData[date];
+                return {
+                    date: date,
+                    avgTemperature: (dailyEntry.temperatureSum / dailyEntry.count).toFixed(2),
+                    avgSoilMoisture: (dailyEntry.soilMoistureSum / dailyEntry.count).toFixed(2),
+                    avgAirHumidity: (dailyEntry.airHumiditySum / dailyEntry.count).toFixed(2)
+                };
+            });
+        }
+
+        fetchData('http://localhost:5002/api/get_sensor_data').then(data => {
+            const tabelaBody = document.getElementById('historico-tabela').getElementsByTagName('tbody')[0];
+            const recentData = data.filter(entry => isWithinLast7Days(entry.data_hora));
+            const dailyAverages = calculateDailyAverages(recentData);
+
+            dailyAverages.forEach(entry => {
+                const row = tabelaBody.insertRow();
+                const cellDate = row.insertCell(0);
+                const cellAvgTemperature = row.insertCell(1);
+                const cellAvgSoilMoisture = row.insertCell(2);
+                const cellAvgAirHumidity = row.insertCell(3);
+
+                // Formatar data
+                const dateParts = entry.date.split('-');
+                const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
+
+                cellDate.textContent = formattedDate;
+                cellAvgTemperature.textContent = entry.avgTemperature;
+                cellAvgSoilMoisture.textContent = entry.avgSoilMoisture;
+                cellAvgAirHumidity.textContent = entry.avgAirHumidity;
+            });
+        });
+
+    });
+
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Função para mostrar a seção ativa
@@ -203,58 +571,10 @@
             document.getElementById(sectionId).classList.add('active');
         }
 
-        // Função para renderizar gráfico de estatísticas
-        function renderGrafico() {
-            var ctx = document.getElementById('grafico').getContext('2d');
-            var chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho'],
-                    datasets: [{
-                        label: 'Umidade do Solo',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        data: [65, 59, 80, 81, 56, 55],
-                        fill: false,
-                    }]
-                },
-                options: {}
-            });
-        }
-
-        // Função para renderizar gráfico de histórico de dados
-        function renderGraficoHistorico() {
-            var ctx = document.getElementById('grafico-historico').getContext('2d');
-            var chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['00:00', '06:00', '12:00', '18:00', '00:00'],
-                    datasets: [{
-                        label: 'Temperatura',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        data: [20, 21, 22, 21, 20],
-                        fill: false,
-                    }, {
-                        label: 'Umidade do Solo',
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        data: [45, 50, 55, 49],
-                        fill: false,
-                    }]
-                },
-                options: {}
-            });
-        }
-
         // Função para logout
         function logout() {
             window.location.href = "/";
         }
-
-        // Renderizar gráficos ao carregar a página
-        renderGrafico();
-        renderGraficoHistorico();
     </script>
 </body>
 </html>
