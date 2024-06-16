@@ -399,18 +399,32 @@
                 .catch(error => console.error('Error fetching data:', error));
         }
 
+        // Função plotGraph com eixo x simplificado para 18 registros e descrição da data reduzida
         function plotGraph(elementId, title, xData, yData, yTitle) {
             const trace = {
                 x: xData,
                 y: yData,
                 mode: 'lines+markers',
-                type: 'scatter'
+                type: 'scatter',
+                marker: {
+                    color: 'lightgreen' // Alterando para um tom verde claro
+                }
             };
+
+            // Reduzir o número de registros no eixo x para 10
+            const numTicks = 18;
+            const step = Math.ceil(xData.length / numTicks);
 
             const layout = {
                 title: title,
                 autosize: true,
-                xaxis: { title: 'Data e Hora' },
+                xaxis: {
+                    title: 'Data e Hora',
+                    tickmode: 'array',
+                    tickvals: xData.filter((_, index) => index % step === 0), // Selecionar ticks a cada 'step' intervalo
+                    tickformat: '%d-%m-%Y %H:%M', // Formato para exibir data e hora de forma legível
+                    automargin: true // Ajuste automático das margens para evitar sobreposição
+                },
                 yaxis: { title: yTitle },
                 margin: { l: 50, r: 50, t: 45, b: 50 }
             };
