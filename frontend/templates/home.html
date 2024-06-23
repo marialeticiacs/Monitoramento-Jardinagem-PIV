@@ -8,6 +8,7 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.10.1/main.min.js'></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -393,26 +394,33 @@
     </script>
 
     <script>
-        function fetchData(url) {
-            return fetch(url)
-                .then(response => response.json())
-                .catch(error => console.error('Error fetching data:', error));
+        // Função para buscar dados da API
+        async function fetchData(url) {
+            try {
+                const response = await fetch(url);
+                return await response.json();
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
         }
 
-        // Função plotGraph com eixo x simplificado para 18 registros e descrição da data reduzida
+        // Função para plotar gráfico com eixo x simplificado
         function plotGraph(elementId, title, xData, yData, yTitle) {
             const trace = {
                 x: xData,
                 y: yData,
-                mode: 'lines+markers',
+                mode: 'lines+markers', // Garante que tanto linhas quanto marcadores sejam exibidos
                 type: 'scatter',
                 marker: {
                     color: 'lightgreen' // Alterando para um tom verde claro
+                },
+                line: {
+                    color: 'lightgreen' // Garantir que a linha também seja verde claro
                 }
             };
 
-            // Reduzir o número de registros no eixo x para 10
-            const numTicks = 18;
+            // Reduzir o número de registros no eixo x
+            const numTicks = 30;
             const step = Math.ceil(xData.length / numTicks);
 
             const layout = {
@@ -421,7 +429,7 @@
                 xaxis: {
                     title: 'Data e Hora',
                     tickmode: 'array',
-                    tickvals: xData.filter((_, index) => index % step === 0), // Selecionar ticks a cada 'step' intervalo
+                    tickvals: xData.filter((_, index) => index % step === 0),
                     tickformat: '%d-%m-%Y %H:%M', // Formato para exibir data e hora de forma legível
                     automargin: true // Ajuste automático das margens para evitar sobreposição
                 },
@@ -432,23 +440,32 @@
             Plotly.newPlot(elementId, [trace], layout);
         }
 
-        fetchData('http://localhost:5002/api/get_temperature_data').then(data => {
-            const dates = data.map(entry => entry.data_hora);
-            const temperatures = data.map(entry => entry.temperatura_ambiente);
-            plotGraph('temperature-graph', 'Histórico de Temperaturas Ambiente', dates, temperatures, 'Temperatura (°C)');
-        });
+        // Função para inicializar gráficos
+        async function initializeGraphs() {
+            const temperatureData = await fetchData('http://localhost:5002/api/get_temperature_data');
+            if (temperatureData && temperatureData.length > 0) {
+                const dates = temperatureData.map(entry => entry.data_hora);
+                const temperatures = temperatureData.map(entry => entry.temperatura_ambiente);
+                plotGraph('temperature-graph', 'Histórico de Temperaturas Ambiente', dates, temperatures, 'Temperatura (°C)');
+            }
 
-        fetchData('http://localhost:5002/api/get_soil_moisture_data').then(data => {
-            const dates = data.map(entry => entry.data_hora);
-            const soilMoistures = data.map(entry => entry.umidade_solo);
-            plotGraph('soil-moisture-graph', 'Histórico de Umidade do Solo', dates, soilMoistures, 'Umidade do Solo (%)');
-        });
+            const soilMoistureData = await fetchData('http://localhost:5002/api/get_soil_moisture_data');
+            if (soilMoistureData && soilMoistureData.length > 0) {
+                const dates = soilMoistureData.map(entry => entry.data_hora);
+                const soilMoistures = soilMoistureData.map(entry => entry.umidade_solo);
+                plotGraph('soil-moisture-graph', 'Histórico de Umidade do Solo', dates, soilMoistures, 'Umidade do Solo (%)');
+            }
 
-        fetchData('http://localhost:5002/api/get_air_humidity_data').then(data => {
-            const dates = data.map(entry => entry.data_hora);
-            const airHumidities = data.map(entry => entry.umidade_ar);
-            plotGraph('air-humidity-graph', 'Histórico de Umidade do Ar', dates, airHumidities, 'Umidade do Ar (%)');
-        });
+            const airHumidityData = await fetchData('http://localhost:5002/api/get_air_humidity_data');
+            if (airHumidityData && airHumidityData.length > 0) {
+                const dates = airHumidityData.map(entry => entry.data_hora);
+                const airHumidities = airHumidityData.map(entry => entry.umidade_ar);
+                plotGraph('air-humidity-graph', 'Histórico de Umidade do Ar', dates, airHumidities, 'Umidade do Ar (%)');
+            }
+        }
+
+        // Inicializar gráficos ao carregar a página
+        document.addEventListener('DOMContentLoaded', initializeGraphs);
     </script>
 
     <script>
@@ -504,79 +521,82 @@
     </script>
 
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        function fetchData(url) {
-            return fetch(url)
-                .then(response => response.json())
-                .catch(error => console.error('Error fetching data:', error));
-        }
-
-        function isWithinLast7Days(date) {
-            const now = new Date();
-            const past7Days = new Date(now.setDate(now.getDate() - 7));
-            return new Date(date) >= past7Days;
-        }
-
-        function calculateDailyAverages(data) {
-            const dailyData = {};
-
-            data.forEach(entry => {
-                const date = new Date(entry.data_hora).toISOString().split('T')[0];
-
-                if (!dailyData[date]) {
-                    dailyData[date] = {
-                        temperatureSum: 0,
-                        soilMoistureSum: 0,
-                        airHumiditySum: 0,
-                        count: 0
+        document.addEventListener('DOMContentLoaded', function() {
+            function fetchData(url) {
+                return fetch(url)
+                    .then(response => response.json())
+                    .catch(error => console.error('Error fetching data:', error));
+            }
+        
+            function isWithinLast7Days(date) {
+                const now = new Date();
+                const past7Days = new Date(now.setDate(now.getDate() - 7));
+                return new Date(date) >= past7Days;
+            }
+        
+            function formatDate(date) {
+                const d = new Date(date);
+                const day = d.getDate().toString().padStart(2, '0');
+                const month = (d.getMonth() + 1).toString().padStart(2, '0');
+                const year = d.getFullYear();
+                return `${day}/${month}/${year}`;
+            }
+        
+            function calculateDailyAverages(data) {
+                const dailyData = {};
+        
+                data.forEach(entry => {
+                    const date = formatDate(entry.data_hora);
+        
+                    if (!dailyData[date]) {
+                        dailyData[date] = {
+                            temperatureSum: 0,
+                            soilMoistureSum: 0,
+                            airHumiditySum: 0,
+                            count: 0
+                        };
+                    }
+        
+                    dailyData[date].temperatureSum += entry.temperatura_ambiente;
+                    dailyData[date].soilMoistureSum += entry.umidade_solo;
+                    dailyData[date].airHumiditySum += entry.umidade_ar;
+                    dailyData[date].count += 1;
+                });
+        
+                return Object.keys(dailyData).map(date => {
+                    const dailyEntry = dailyData[date];
+                    return {
+                        date: date,
+                        avgTemperature: (dailyEntry.temperatureSum / dailyEntry.count).toFixed(2),
+                        avgSoilMoisture: (dailyEntry.soilMoistureSum / dailyEntry.count).toFixed(2),
+                        avgAirHumidity: (dailyEntry.airHumiditySum / dailyEntry.count).toFixed(2)
                     };
-                }
-
-                dailyData[date].temperatureSum += entry.temperatura_ambiente;
-                dailyData[date].soilMoistureSum += entry.umidade_solo;
-                dailyData[date].airHumiditySum += entry.umidade_ar;
-                dailyData[date].count += 1;
+                });
+            }
+        
+            fetchData('http://localhost:5002/api/get_sensor_data').then(data => {
+                const tabelaBody = document.getElementById('historico-tabela').getElementsByTagName('tbody')[0];
+                const recentData = data.filter(entry => isWithinLast7Days(entry.data_hora));
+                const dailyAverages = calculateDailyAverages(recentData);
+        
+                dailyAverages.forEach(entry => {
+                    const row = tabelaBody.insertRow();
+                    const cellDate = row.insertCell(0);
+                    const cellAvgTemperature = row.insertCell(1);
+                    const cellAvgSoilMoisture = row.insertCell(2);
+                    const cellAvgAirHumidity = row.insertCell(3);
+        
+                    cellDate.textContent = entry.date;
+                    cellAvgTemperature.textContent = entry.avgTemperature;
+                    cellAvgSoilMoisture.textContent = entry.avgSoilMoisture;
+                    cellAvgAirHumidity.textContent = entry.avgAirHumidity;
+                });
             });
-
-            return Object.keys(dailyData).map(date => {
-                const dailyEntry = dailyData[date];
-                return {
-                    date: date,
-                    avgTemperature: (dailyEntry.temperatureSum / dailyEntry.count).toFixed(2),
-                    avgSoilMoisture: (dailyEntry.soilMoistureSum / dailyEntry.count).toFixed(2),
-                    avgAirHumidity: (dailyEntry.airHumiditySum / dailyEntry.count).toFixed(2)
-                };
-            });
-        }
-
-        fetchData('http://localhost:5002/api/get_sensor_data').then(data => {
-            const tabelaBody = document.getElementById('historico-tabela').getElementsByTagName('tbody')[0];
-            const recentData = data.filter(entry => isWithinLast7Days(entry.data_hora));
-            const dailyAverages = calculateDailyAverages(recentData);
-
-            dailyAverages.forEach(entry => {
-                const row = tabelaBody.insertRow();
-                const cellDate = row.insertCell(0);
-                const cellAvgTemperature = row.insertCell(1);
-                const cellAvgSoilMoisture = row.insertCell(2);
-                const cellAvgAirHumidity = row.insertCell(3);
-
-                // Formatar data
-                const dateParts = entry.date.split('-');
-                const formattedDate = `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-
-                cellDate.textContent = formattedDate;
-                cellAvgTemperature.textContent = entry.avgTemperature;
-                cellAvgSoilMoisture.textContent = entry.avgSoilMoisture;
-                cellAvgAirHumidity.textContent = entry.avgAirHumidity;
-            });
+        
         });
-
-    });
-
     </script>
+    
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         // Função para mostrar a seção ativa
         function showSection(sectionId) {
